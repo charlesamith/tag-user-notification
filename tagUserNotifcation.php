@@ -4,7 +4,7 @@
 Plugin Name: Tagged User Notification
 Plugin URI: http://www.brokencitylab.org
 Description: Send a notification to user tagged in a comment
-Version: 0.1
+Version: 0.2
 Author: Justin Langlois, based on code from Fabio Trezzi's Notify on Comment plugin
 Author URI: 
 */
@@ -20,7 +20,7 @@ function notifyOnUserTag_send($commentID){
 	
 	$matches = array();
 	//find the @user text
-	preg_match_all("/\@[a-z0-9_]+/i", $content, $matches, PREG_SET_ORDER);
+	preg_match_all("/\@[a-z0-9-_.]+/i", $content, $matches, PREG_SET_ORDER);
 	
 	//examples of how this is found, notice the structure of the array
 	//$firstuser = $matches[0][0];
@@ -85,11 +85,9 @@ function notifyOnUserTag_send($commentID){
 	$headers= "From:$admin_email\r\n";
 	$headers .= "Reply-To:$admin_email\r\n";
 	$headers .= "X-Mailer: PHP/".phpversion();
-	$template = get_option('notifyOnUserTag_emailTemplate');
-	
-	
-	// If not setted load the default from file
-	if($template ) $template = file_get_contents(dirname(__FILE__) . '/defaultTemplate.php');
+
+	// Load the default from file
+	$template = file_get_contents(dirname(__FILE__) . '/defaultTemplate.php');
 
 	// Replace all the constant with the rights values
 	$template = str_replace("{postID}", $post->ID, $template);
